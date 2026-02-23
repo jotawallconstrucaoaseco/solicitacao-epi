@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jota Wall - Sistema de Controle de EPIs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #029ED9 0%, #0E6883 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .logo-container {
+            margin-bottom: 20px;
+        }
+        
+        .logo-container img {
+            max-width: 250px;
+            height: auto;
+        }
+        
+        .header h1 {
+            color: #0E6883;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1em;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .section-title {
+            color: #0E6883;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #029ED9;
+            font-weight: 700;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #029ED9;
+            box-shadow: 0 0 0 3px rgba(2, 158, 217, 0.1);
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .radio-option:hover {
+            border-color: #029ED9;
+            background: #f0f9fd;
+        }
+        
+        .radio-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: #029ED9;
+        }
+        
+        .radio-option label {
+            cursor: pointer;
+            margin: 0;
+            font-size: 1.1em;
+        }
+        
+        .colaborador-card {
+            background: #f0f9fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #029ED9;
+            position: relative;
+        }
+        
+        .colaborador-card h4 {
+            color: #0E6883;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            font-weight: 700;
+        }
+        
+        .item-epi {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            position: relative;
+        }
+        
+        .remove-item-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .remove-item-btn:hover {
+            background: #ff5252;
+        }
+        
+        .remove-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .remove-btn:hover {
+            background: #e84118;
+            transform: scale(1.05);
+        }
+        
+        .add-btn {
+            background: #029ED9;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .add-btn:hover {
+            background: #0287bd;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 158, 217, 0.3);
+        }
+        
+        .add-btn.secondary {
+            background: #4CAF50;
+            padding: 10px 20px;
+            font-size: 0.9em;
+        }
+        
+        .add-btn.secondary:hover {
+            background: #45a049;
+        }
+        
+        .estoque-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .estoque-item {
+            background: #f0f9fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #029ED9;
+        }
+        
+        .estoque-item label {
+            display: block;
+            color: #0E6883;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .quantidade-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .quantidade-btn {
+            padding: 8px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+        
+        .quantidade-btn:hover {
+            border-color: #029ED9;
+            background: #f0f9fd;
+        }
+        
+        .quantidade-btn.selected {
+            background: #029ED9;
+            color: white;
+            border-color: #029ED9;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #029ED9 0%, #0E6883 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 30px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(2, 158, 217, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .success-message {
+            display: none;
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        .success-message h3 {
+            margin-bottom: 10px;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+        
+        .success-message .pedido-id {
+            font-size: 2em;
+            font-weight: bold;
+            color: #029ED9;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+        
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn:hover {
+            background: #5a6268;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.3em;
+            }
+            
+            .logo-container img {
+                max-width: 180px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .estoque-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="https://raw.githubusercontent.com/jotawall/assets/main/logo.png" alt="Jota Wall Logo" onerror="this.style.display='none'">
+            </div>
+            <h1>🦺 Sistema de Controle de EPIs</h1>
+            <p>Solicitação e Confirmação de Equipamentos de Proteção Individual</p>
+        </div>
+        
+        <div class="form-container">
+            <!-- SELEÇÃO INICIAL -->
+            <div id="selecao-inicial" class="section active">
+                <h2 class="section-title">Escolha uma opção</h2>
+                
+                <div class="radio-group">
+                    <div class="radio-option" onclick="selectAction('solicitacao')">
+                        <input type="radio" name="tipo-acao" id="nova-solicitacao" value="solicitacao">
+                        <label for="nova-solicitacao">Nova Solicitação de EPI</label>
+                    </div>
+                    
+                    <div class="radio-option" onclick="selectAction('confirmacao')">
+                        <input type="radio" name="tipo-acao" id="confirmacao-entrega" value="confirmacao">
+                        <label for="confirmacao-entrega">Confirmação de Entrega</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO: DADOS DA SOLICITAÇÃO -->
+            <div id="dados-solicitacao" class="section">
+                <button class="back-btn" onclick="voltarInicio()">← Voltar</button>
+                
+                <h2 class="section-title">Dados da Solicitação</h2>
+                
+                <div class="form-group">
+                    <label for="obra">Obra *</label>
+                    <select id="obra" required>
+                        <option value="">Selecione a obra</option>
+                        <option value="Cyrela - Living Hectare Anália Franco">Cyrela - Living Hectare Anália Franco</option>
+                        <option value="Cyrela - Grand Wish Santo André">Cyrela - Grand Wish Santo André</option>
+                        <option value="Miramar - Hospital Prevent Senior">Miramar - Hospital Prevent Senior</option>
+                        <option value="Eztec - Esther Towers">Eztec - Esther Towers</option>
+                        <option value="Eztec - Lindenberg Alto das Nações">Eztec - Lindenberg Alto das Nações</option>
+                        <option value="Eztec - Dot">Eztec - Dot</option>
+                        <option value="Kallas - QG Faria Lima">Kallas - QG Faria Lima</option>
+                        <option value="Kallas - YEP Pinheiro">Kallas - YEP Pinheiro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="encarregado">Nome do Encarregado *</label>
+                    <input type="text" id="encarregado" placeholder="Digite o nome do encarregado" required>
+                </div>
+                
+                <button class="submit-btn" onclick="avancarParaColaboradores()">Continuar →</button>
+            </div>
+            
+            <!-- SEÇÃO: COLABORADORES -->
+            <div id="secao-colaboradores" class="section">
+                <button class="back-btn" onclick="voltarDados()">← Voltar</button>
+                
+                <h2 class="section-title">Pedidos por Colaborador</h2>
+                
+                <div class="info-box">
+                    <strong>Instruções:</strong>
+                    Adicione cada colaborador e seus itens. Você pode adicionar vários itens para o mesmo colaborador.
+                </div>
+                
+                <div id="colaboradores-lista"></div>
+                
+                <button class="add-btn" onclick="adicionarColaborador()">
+                    <span>+</span> Adicionar Colaborador
+                </button>
+                
+                <button class="submit-btn" onclick="avancarParaEstoque()">Continuar →</button>
+            </div>
+            
+            <!-- SEÇÃO: ESTOQUE -->
+            <div id="secao-estoque" class="section">
+                <button class="back-btn" onclick="voltarColaboradores()">← Voltar</button>
+                
+                <h2 class="section-title">Pedido para Estoque da Obra</h2>
+                
+                <div class="info-box">
+                    <strong>Opcional:</strong>
+                    Selecione as quantidades necessárias para o estoque da obra. Deixe em branco se não precisar.
+                </div>
+                
+                <div class="estoque-grid">
+                    <div class="estoque-item">
+                        <label>Luva G</label>
+                        <div class="quantidade-options" id="luva-g-opts"></div>
+                    </div>
+                    
+                    <div class="estoque-item">
+                        <label>Luva M</label>
+                        <div class="quantidade-options" id="luva-m-opts"></div>
+                    </div>
+                    
+                    <div class="estoque-item">
+                        <label>Óculos de Segurança</label>
+                        <div class="quantidade-options" id="oculos-opts"></div>
+                    </div>
+                    
+                    <div class="estoque-item">
+                        <label>Protetor Auditivo Plug</label>
+                        <div class="quantidade-options" id="protetor-opts"></div>
+                    </div>
+                </div>
+                
+                <button class="submit-btn" onclick="enviarSolicitacao()">📤 Enviar Solicitação</button>
+            </div>
+            
+            <!-- SEÇÃO: CONFIRMAÇÃO DE ENTREGA -->
+            <div id="secao-confirmacao" class="section">
+                <button class="back-btn" onclick="voltarInicio()">← Voltar</button>
+                
+                <h2 class="section-title">Confirmação de Entrega</h2>
+                
+                <div class="form-group">
+                    <label for="id-pedido">ID do Pedido *</label>
+                    <input type="text" id="id-pedido" placeholder="Digite o ID do pedido (ex: EPI-0001)" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="data-entrega">Data da Entrega *</label>
+                    <input type="date" id="data-entrega" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="observacao">Observações (opcional)</label>
+                    <textarea id="observacao" rows="4" placeholder="Digite observações se necessário"></textarea>
+                </div>
+                
+                <button class="submit-btn" onclick="enviarConfirmacao()">✅ Confirmar Entrega</button>
+            </div>
+            
+            <!-- MENSAGEM DE SUCESSO -->
+            <div id="success-message" class="success-message">
+                <h3>✅ Pedido Enviado com Sucesso!</h3>
+                <p>Anote este número para confirmar a entrega posteriormente:</p>
+                <div class="pedido-id" id="pedido-id-display"></div>
+                <button class="submit-btn" onclick="novoFormulario()" style="margin-top: 20px;">Fazer Novo Pedido</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ========================================
+        // CONFIGURAÇÃO - URL DO GOOGLE APPS SCRIPT
+        // ========================================
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwubD9TkTpqX8CcyUY7WM3eQS_4n2SHmdBPmlVWZB0bMP4_AVi0CY9SEVByjIohI9B-/exec';
+        
+        // Configuração
+        const QUANTIDADES = [5, 10, 15, 20, 30, 40, 50];
+        let colaboradorCounter = 0;
+        
+        // Dados temporários
+        let formData = {
+            tipo: '',
+            obra: '',
+            encarregado: '',
+            colaboradores: [],
+            estoque: {}
+        };
+        
+        // Inicializar opções de quantidade para estoque
+        function initEstoqueOptions() {
+            const itens = ['luva-g', 'luva-m', 'oculos', 'protetor'];
+            
+            itens.forEach(item => {
+                const container = document.getElementById(`${item}-opts`);
+                QUANTIDADES.forEach(qtd => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'quantidade-btn';
+                    btn.textContent = qtd;
+                    btn.onclick = () => toggleQuantidade(item, qtd, btn);
+                    container.appendChild(btn);
+                });
+            });
+        }
+        
+        // Toggle quantidade no estoque
+        function toggleQuantidade(item, qtd, btn) {
+            const container = btn.parentElement;
+            container.querySelectorAll('.quantidade-btn').forEach(b => {
+                b.classList.remove('selected');
+            });
+            
+            if (formData.estoque[item] === qtd) {
+                formData.estoque[item] = null;
+            } else {
+                formData.estoque[item] = qtd;
+                btn.classList.add('selected');
+            }
+        }
+        
+        // Navegação entre seções
+        function selectAction(tipo) {
+            document.getElementById(tipo === 'solicitacao' ? 'nova-solicitacao' : 'confirmacao-entrega').checked = true;
+            formData.tipo = tipo;
+            
+            hideAllSections();
+            
+            if (tipo === 'solicitacao') {
+                showSection('dados-solicitacao');
+            } else {
+                showSection('secao-confirmacao');
+            }
+        }
+        
+        function hideAllSections() {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+        }
+        
+        function showSection(sectionId) {
+            document.getElementById(sectionId).classList.add('active');
+        }
+        
+        function voltarInicio() {
+            hideAllSections();
+            showSection('selecao-inicial');
+            limparFormulario();
+        }
+        
+        function voltarDados() {
+            hideAllSections();
+            showSection('dados-solicitacao');
+        }
+        
+        function voltarColaboradores() {
+            hideAllSections();
+            showSection('secao-colaboradores');
+        }
+        
+        function avancarParaColaboradores() {
+            const obra = document.getElementById('obra').value;
+            const encarregado = document.getElementById('encarregado').value;
+            
+            if (!obra || !encarregado) {
+                alert('Por favor, preencha todos os campos obrigatórios!');
+                return;
+            }
+            
+            formData.obra = obra;
+            formData.encarregado = encarregado;
+            
+            hideAllSections();
+            showSection('secao-colaboradores');
+            
+            if (document.getElementById('colaboradores-lista').children.length === 0) {
+                adicionarColaborador();
+            }
+        }
+        
+        function avancarParaEstoque() {
+            const colaboradores = coletarDadosColaboradores();
+            
+            if (colaboradores.length === 0) {
+                alert('Adicione pelo menos um colaborador com pelo menos um item!');
+                return;
+            }
+            
+            formData.colaboradores = colaboradores;
+            
+            hideAllSections();
+            showSection('secao-estoque');
+        }
+        
+        // Gerenciar colaboradores
+        function adicionarColaborador() {
+            colaboradorCounter++;
+            const id = colaboradorCounter;
+            
+            const card = document.createElement('div');
+            card.className = 'colaborador-card';
+            card.id = `colaborador-${id}`;
+            
+            card.innerHTML = `
+                <h4>Colaborador ${id}</h4>
+                ${id > 1 ? `<button type="button" class="remove-btn" onclick="removerColaborador(${id})">✕ Remover</button>` : ''}
+                
+                <div class="form-group">
+                    <label>Nome do Colaborador *</label>
+                    <input type="text" class="colaborador-nome" placeholder="Digite o nome" required>
+                </div>
+                
+                <div id="itens-lista-${id}"></div>
+                
+                <button type="button" class="add-btn secondary" onclick="adicionarItem(${id})">
+                    + Adicionar Item
+                </button>
+            `;
+            
+            document.getElementById('colaboradores-lista').appendChild(card);
+            
+            // Adicionar primeiro item automaticamente
+            adicionarItem(id);
+        }
+        
+        function adicionarItem(colaboradorId) {
+            const itemId = Date.now();
+            const itemsContainer = document.getElementById(`itens-lista-${colaboradorId}`);
+            const itemCount = itemsContainer.children.length;
+            
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item-epi';
+            itemDiv.id = `item-${itemId}`;
+            
+            itemDiv.innerHTML = `
+                ${itemCount > 0 ? `<button type="button" class="remove-item-btn" onclick="removerItem(${itemId})">✕</button>` : ''}
+                
+                <div class="form-group">
+                    <label>Item *</label>
+                    <select class="item-tipo" required onchange="updateTamanhos(${itemId})">
+                        <option value="">Selecione o item</option>
+                        <option value="Bota">Bota</option>
+                        <option value="Calça">Calça</option>
+                        <option value="Camisa">Camisa</option>
+                        <option value="Capacete">Capacete</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tamanho *</label>
+                    <select class="item-tamanho" id="tamanho-${itemId}" required>
+                        <option value="">Selecione primeiro o item</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Quantidade *</label>
+                    <input type="number" class="item-quantidade" min="1" value="1" required>
+                </div>
+            `;
+            
+            itemsContainer.appendChild(itemDiv);
+        }
+        
+        function removerItem(itemId) {
+            const item = document.getElementById(`item-${itemId}`);
+            if (item) {
+                item.remove();
+            }
+        }
+        
+        function removerColaborador(id) {
+            const card = document.getElementById(`colaborador-${id}`);
+            if (card) {
+                card.remove();
+            }
+        }
+        
+        function updateTamanhos(itemId) {
+            const itemDiv = document.getElementById(`item-${itemId}`);
+            const itemSelect = itemDiv.querySelector('.item-tipo');
+            const tamanhoSelect = itemDiv.querySelector('.item-tamanho');
+            const tamanhoGroup = tamanhoSelect.closest('.form-group');
+            
+            const item = itemSelect.value;
+            tamanhoSelect.innerHTML = '<option value="">Selecione o tamanho</option>';
+            
+            let tamanhos = [];
+            
+            switch(item) {
+                case 'Bota':
+                    tamanhos = ['38', '39', '40', '41', '42', '43', '44'];
+                    tamanhoGroup.style.display = 'block';
+                    break;
+                case 'Calça':
+                case 'Camisa':
+                    tamanhos = ['P', 'M', 'G', 'GG', 'XG'];
+                    tamanhoGroup.style.display = 'block';
+                    break;
+                case 'Capacete':
+                    // Ocultar campo de tamanho e definir valor automático
+                    tamanhoGroup.style.display = 'none';
+                    tamanhoSelect.innerHTML = '<option value="U" selected>U</option>';
+                    return;
+                default:
+                    tamanhoGroup.style.display = 'block';
+                    break;
+            }
+            
+            tamanhos.forEach(tam => {
+                const option = document.createElement('option');
+                option.value = tam;
+                option.textContent = tam;
+                tamanhoSelect.appendChild(option);
+            });
+        }
+        
+        function coletarDadosColaboradores() {
+            const cards = document.querySelectorAll('.colaborador-card');
+            const colaboradores = [];
+            
+            cards.forEach(card => {
+                const nome = card.querySelector('.colaborador-nome').value;
+                if (!nome) return;
+                
+                const itens = [];
+                const itemDivs = card.querySelectorAll('.item-epi');
+                
+                itemDivs.forEach(itemDiv => {
+                    const item = itemDiv.querySelector('.item-tipo').value;
+                    const tamanho = itemDiv.querySelector('.item-tamanho').value;
+                    const quantidade = itemDiv.querySelector('.item-quantidade').value;
+                    
+                    if (item && tamanho && quantidade) {
+                        itens.push({ item, tamanho, quantidade });
+                    }
+                });
+                
+                if (itens.length > 0) {
+                    colaboradores.push({ nome, itens });
+                }
+            });
+            
+            return colaboradores;
+        }
+        
+        // Enviar dados
+        function enviarSolicitacao() {
+            const btn = event.target;
+            btn.textContent = '⏳ Enviando...';
+            btn.disabled = true;
+            
+            const dados = {
+                tipo: 'Nova Solicitação de EPI',
+                timestamp: new Date().toISOString(),
+                obra: formData.obra,
+                encarregado: formData.encarregado,
+                colaboradores: formData.colaboradores,
+                estoque: formData.estoque
+            };
+            
+            console.log('=== DADOS COMPLETOS ===');
+            console.log('Obra:', dados.obra);
+            console.log('Encarregado:', dados.encarregado);
+            console.log('Colaboradores:', JSON.stringify(dados.colaboradores, null, 2));
+            console.log('Estoque:', JSON.stringify(dados.estoque, null, 2));
+            console.log('JSON completo a ser enviado:', JSON.stringify(dados, null, 2));
+            console.log('=======================');
+            
+            fetch(SCRIPT_URL, {
+                redirect: 'follow',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+                body: JSON.stringify(dados)
+            })
+            .then(response => {
+                console.log('Resposta status:', response.status);
+                return response.json();
+            })
+            .then(result => {
+                console.log('Resposta recebida:', result);
+                
+                if (result.status === 'success') {
+                    mostrarSucesso(result.idPedido || 'EPI-XXXX');
+                } else {
+                    alert('Erro: ' + (result.message || 'Erro desconhecido'));
+                    btn.textContent = '📤 Enviar Solicitação';
+                    btn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Erro completo:', error);
+                alert('Erro ao enviar. Verifique sua conexão e tente novamente.');
+                btn.textContent = '📤 Enviar Solicitação';
+                btn.disabled = false;
+            });
+        }
+        
+        function enviarConfirmacao() {
+            const idPedido = document.getElementById('id-pedido').value;
+            const dataEntrega = document.getElementById('data-entrega').value;
+            const observacao = document.getElementById('observacao').value;
+            
+            if (!idPedido || !dataEntrega) {
+                alert('Por favor, preencha todos os campos obrigatórios!');
+                return;
+            }
+            
+            const btn = event.target;
+            btn.textContent = '⏳ Confirmando...';
+            btn.disabled = true;
+            
+            const dados = {
+                tipo: 'Confirmação de Entrega',
+                timestamp: new Date().toISOString(),
+                idPedido,
+                dataEntrega,
+                observacao
+            };
+            
+            console.log('=== CONFIRMAÇÃO DE ENTREGA ===');
+            console.log('ID Pedido:', dados.idPedido);
+            console.log('Data Entrega:', dados.dataEntrega);
+            console.log('Observação:', dados.observacao);
+            console.log('JSON completo:', JSON.stringify(dados, null, 2));
+            console.log('==============================');
+            
+            fetch(SCRIPT_URL, {
+                redirect: 'follow',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+                body: JSON.stringify(dados)
+            })
+            .then(response => {
+                console.log('Resposta status:', response.status);
+                return response.json();
+            })
+            .then(result => {
+                console.log('Resposta recebida:', result);
+                
+                if (result.status === 'success') {
+                    mostrarSucesso('Entrega Confirmada!');
+                } else {
+                    alert('Erro: ' + (result.message || 'Erro desconhecido'));
+                    btn.textContent = '✅ Confirmar Entrega';
+                    btn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Erro completo na confirmação:', error);
+                alert('Erro ao confirmar. Verifique sua conexão e tente novamente.');
+                btn.textContent = '✅ Confirmar Entrega';
+                btn.disabled = false;
+            });
+        }
+        
+        function mostrarSucesso(mensagem) {
+            document.getElementById('pedido-id-display').textContent = mensagem;
+            hideAllSections();
+            document.getElementById('success-message').classList.add('show');
+        }
+        
+        function limparFormulario() {
+            document.getElementById('obra').value = '';
+            document.getElementById('encarregado').value = '';
+            document.getElementById('colaboradores-lista').innerHTML = '';
+            document.getElementById('id-pedido').value = '';
+            document.getElementById('data-entrega').value = '';
+            document.getElementById('observacao').value = '';
+            
+            formData.estoque = {};
+            document.querySelectorAll('.quantidade-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            colaboradorCounter = 0;
+            document.getElementById('success-message').classList.remove('show');
+        }
+        
+        function novoFormulario() {
+            limparFormulario();
+            voltarInicio();
+        }
+        
+        // Inicializar ao carregar a página
+        window.onload = function() {
+            initEstoqueOptions();
+        };
+    </script>
+</body>
+</html>
