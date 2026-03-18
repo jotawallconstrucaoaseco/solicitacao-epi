@@ -396,6 +396,60 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        /* Estilos para checkboxes de itens */
+        .item-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .item-checkbox:hover {
+            border-color: #029ED9;
+            background: #f0f8ff;
+        }
+        
+        .item-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        
+        .item-checkbox label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+            font-size: 1em;
+            color: #333;
+        }
+        
+        .item-checkbox.checked {
+            background: #e8f5e9;
+            border-color: #4CAF50;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #029ED9;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -518,8 +572,27 @@
                 <h2 class="section-title">Confirmação de Entrega</h2>
                 
                 <div class="form-group">
-                    <label for="id-pedido">ID do Pedido *</label>
-                    <input type="text" id="id-pedido" placeholder="Digite o ID do pedido (ex: EPI-0001)" required>
+                    <label for="id-pedido-confirmar">ID do Pedido *</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" id="id-pedido-confirmar" placeholder="Digite o ID do pedido (ex: EPI-0001)" required style="flex: 1;">
+                        <span id="loading-pedido" style="display: none; margin-left: 10px;">
+                            <span class="loading-spinner"></span>
+                        </span>
+                    </div>
+                    <button type="button" onclick="buscarPedidoManual()" style="margin-top: 10px; padding: 10px 20px; background: #029ED9; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">🔍 Buscar Pedido</button>
+                </div>
+                
+                <!-- INFO DO PEDIDO -->
+                <div id="info-pedido" style="display: none; margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196F3;">
+                    <p style="margin: 5px 0; color: #1976D2;"><strong>📍 Obra:</strong> <span id="pedido-obra"></span></p>
+                    <p style="margin: 5px 0; color: #1976D2;"><strong>👤 Encarregado:</strong> <span id="pedido-encarregado"></span></p>
+                </div>
+                
+                <!-- CONTAINER DOS ITENS SOLICITADOS -->
+                <div id="itens-solicitados-container" style="display: none; margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #029ED9;">
+                    <h3 style="color: #0E6883; margin-bottom: 15px; font-size: 1.1em;">📦 Itens Solicitados:</h3>
+                    <p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">✅ <strong>Marque</strong> apenas os itens que foram <strong>realmente entregues</strong>:</p>
+                    <div id="lista-itens-solicitados"></div>
                 </div>
                 
                 <div class="form-group">
@@ -529,7 +602,7 @@
                 
                 <div class="form-group">
                     <label for="observacao">Observações (opcional)</label>
-                    <textarea id="observacao" rows="4" placeholder="Digite observações se necessário"></textarea>
+                    <textarea id="observacao" rows="4" placeholder="Ex: Calça e Camisa sem estoque, será entregue na próxima semana"></textarea>
                 </div>
                 
                 <button class="submit-btn" onclick="enviarConfirmacao()">✅ Confirmar Entrega</button>
@@ -922,6 +995,14 @@
                 
                 if (result.status === 'success') {
                     mostrarSucesso('Entrega Confirmada!');
+                    // Limpar campos
+                    document.getElementById('id-pedido-confirmar').value = '';
+                    document.getElementById('data-entrega').value = '';
+                    document.getElementById('observacao').value = '';
+                    document.getElementById('info-pedido').style.display = 'none';
+                    document.getElementById('itens-solicitados-container').style.display = 'none';
+                    itensDoPedido = [];
+                    dadosDoPedido = null;
                 } else {
                     alert('Erro: ' + (result.message || 'Erro desconhecido'));
                     btn.textContent = '✅ Confirmar Entrega';
