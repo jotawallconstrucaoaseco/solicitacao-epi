@@ -950,7 +950,7 @@
         }
         
         function enviarConfirmacao() {
-            const idPedido = document.getElementById('id-pedido').value;
+            const idPedido = document.getElementById('id-pedido-confirmar').value;
             const dataEntrega = document.getElementById('data-entrega').value;
             const observacao = document.getElementById('observacao').value;
             
@@ -1044,7 +1044,67 @@
             limparFormulario();
             voltarInicio();
         }
-        
+        // =============================
+// BUSCAR PEDIDO (CORRIGIDO)
+// =============================
+function buscarPedidoManual() {
+    const idPedido = document.getElementById('id-pedido-confirmar').value;
+
+    if (!idPedido) {
+        alert('Digite o ID do pedido!');
+        return;
+    }
+
+    document.getElementById('loading-pedido').style.display = 'inline-block';
+
+    fetch(SCRIPT_URL + "?idPedido=" + idPedido)
+        .then(response => response.json())
+        .then(data => {
+
+            document.getElementById('loading-pedido').style.display = 'none';
+
+            if (data.status === "success") {
+
+                document.getElementById("pedido-obra").textContent = data.obra;
+                document.getElementById("pedido-encarregado").textContent = data.encarregado;
+
+                document.getElementById("info-pedido").style.display = "block";
+
+                // mostrar itens solicitados
+                const lista = document.getElementById("lista-itens-solicitados");
+                lista.innerHTML = "";
+
+                data.itens.forEach(item => {
+
+                    const div = document.createElement("div");
+                    div.className = "item-checkbox";
+
+                    div.innerHTML = `
+                        <input type="checkbox" checked>
+                        <label>${item.item} - ${item.tamanho} (Qtd: ${item.quantidade})</label>
+                    `;
+
+                    lista.appendChild(div);
+                });
+
+                document.getElementById("itens-solicitados-container").style.display = "block";
+
+            } else {
+
+                alert("Pedido não encontrado.");
+
+            }
+
+        })
+        .catch(error => {
+
+            document.getElementById('loading-pedido').style.display = 'none';
+
+            console.error(error);
+            alert("Erro ao buscar pedido.");
+
+        });
+}
         // Inicializar ao carregar a página
         window.onload = function() {
             initEstoqueOptions();
