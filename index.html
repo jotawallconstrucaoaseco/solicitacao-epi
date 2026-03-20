@@ -5,24 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jota Wall - Sistema de Controle de EPIs</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #029ED9 0%, #0E6883 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        
+
+        .container { max-width: 900px; margin: 0 auto; }
+
         .header {
             background: white;
             padding: 30px;
@@ -30,944 +23,788 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             text-align: center;
         }
-        
-        .logo-container {
-            margin-bottom: 20px;
-        }
-        
-        .logo-container img {
-            max-width: 250px;
-            height: auto;
-        }
-        
-        .header h1 {
-            color: #0E6883;
-            font-size: 1.8em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        
-        .header p {
-            color: #666;
-            font-size: 1em;
-        }
-        
+        .logo-container { margin-bottom: 20px; }
+        .logo-container img { max-width: 250px; height: auto; }
+        .header h1 { color: #0E6883; font-size: 1.8em; margin-bottom: 10px; font-weight: 700; }
+        .header p  { color: #666; font-size: 1em; }
+
         .form-container {
             background: white;
             padding: 40px;
             border-radius: 0 0 15px 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
-        
-        .section {
-            margin-bottom: 40px;
-            display: none;
-        }
-        
-        .section.active {
-            display: block;
-        }
-        
+
+        .section { display: none; }
+        .section.active { display: block; }
+
         .section-title {
-            color: #0E6883;
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #029ED9;
-            font-weight: 700;
+            color: #0E6883; font-size: 1.5em; margin-bottom: 20px;
+            padding-bottom: 10px; border-bottom: 3px solid #029ED9; font-weight: 700;
         }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        .form-group label {
-            display: block;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 1em;
-        }
-        
+
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; color: #333; font-weight: 600; margin-bottom: 8px; }
         .form-group input,
         .form-group select,
         .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: all 0.3s;
-            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            width: 100%; padding: 12px 15px;
+            border: 2px solid #e0e0e0; border-radius: 8px;
+            font-size: 1em; transition: border-color 0.3s; font-family: inherit;
         }
-        
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            outline: none;
-            border-color: #029ED9;
-            box-shadow: 0 0 0 3px rgba(2, 158, 217, 0.1);
+            outline: none; border-color: #029ED9;
+            box-shadow: 0 0 0 3px rgba(2,158,217,0.1);
         }
-        
-        .radio-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
+
+        .radio-group { display: flex; flex-direction: column; gap: 15px; }
         .radio-option {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
+            display: flex; align-items: center; padding: 15px;
+            border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.3s;
         }
-        
-        .radio-option:hover {
-            border-color: #029ED9;
-            background: #f0f9fd;
-        }
-        
+        .radio-option:hover { border-color: #029ED9; background: #f0f9fd; }
         .radio-option input[type="radio"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 15px;
-            cursor: pointer;
-            accent-color: #029ED9;
+            width: 20px; height: 20px; margin-right: 15px; accent-color: #029ED9;
         }
-        
-        .radio-option label {
-            cursor: pointer;
-            margin: 0;
-            font-size: 1.1em;
-        }
-        
+        .radio-option label { cursor: pointer; margin: 0; font-size: 1.1em; }
+
         .colaborador-card {
-            background: #f0f9fd;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border-left: 4px solid #029ED9;
-            position: relative;
+            background: #f0f9fd; padding: 20px; border-radius: 10px;
+            margin-bottom: 15px; border-left: 4px solid #029ED9; position: relative;
         }
-        
-        .colaborador-card h4 {
-            color: #0E6883;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-            font-weight: 700;
-        }
-        
+        .colaborador-card h4 { color: #0E6883; margin-bottom: 15px; font-weight: 700; }
+
         .item-epi {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            position: relative;
+            background: white; padding: 15px; margin-bottom: 10px;
+            border-radius: 8px; border: 1px solid #e0e0e0; position: relative;
         }
-        
         .remove-item-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8em;
-            font-weight: 600;
+            position: absolute; top: 10px; right: 10px;
+            background: #ff6b6b; color: white; border: none;
+            padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8em; font-weight: 600;
         }
-        
-        .remove-item-btn:hover {
-            background: #ff5252;
-        }
-        
         .remove-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #ff4757;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.3s;
-            font-weight: 600;
+            position: absolute; top: 15px; right: 15px;
+            background: #ff4757; color: white; border: none;
+            padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600;
         }
-        
-        .remove-btn:hover {
-            background: #e84118;
-            transform: scale(1.05);
-        }
-        
+
         .add-btn {
-            background: #029ED9;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 0.95em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 10px;
+            background: #029ED9; color: white; border: none;
+            padding: 12px 25px; border-radius: 8px; font-size: 0.95em; font-weight: 700;
+            cursor: pointer; transition: all 0.3s; display: inline-flex;
+            align-items: center; gap: 8px; margin-top: 10px;
         }
-        
-        .add-btn:hover {
-            background: #0287bd;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(2, 158, 217, 0.3);
-        }
-        
-        .add-btn.secondary {
-            background: #4CAF50;
-            padding: 10px 20px;
-            font-size: 0.9em;
-        }
-        
-        .add-btn.secondary:hover {
-            background: #45a049;
-        }
-        
-        .estoque-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
+        .add-btn:hover { background: #0287bd; transform: translateY(-2px); }
+        .add-btn.secondary { background: #4CAF50; padding: 10px 20px; font-size: 0.9em; }
+
+        .estoque-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
         .estoque-item {
-            background: #f0f9fd;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 3px solid #029ED9;
+            background: #f0f9fd; padding: 15px; border-radius: 8px; border-left: 3px solid #029ED9;
         }
-        
-        .estoque-item label {
-            display: block;
-            color: #0E6883;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .quantidade-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
+        .estoque-item > label { display: block; color: #0E6883; font-weight: 700; margin-bottom: 10px; }
+        .quantidade-options { display: flex; flex-wrap: wrap; gap: 8px; }
         .quantidade-btn {
-            padding: 8px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.95em;
-            font-weight: 600;
+            padding: 8px 15px; border: 2px solid #e0e0e0;
+            border-radius: 6px; background: white; cursor: pointer;
+            transition: all 0.3s; font-size: 0.95em; font-weight: 600;
         }
-        
-        .quantidade-btn:hover {
-            border-color: #029ED9;
-            background: #f0f9fd;
+        .quantidade-btn:hover { border-color: #029ED9; background: #f0f9fd; }
+        .quantidade-btn.selected { background: #029ED9; color: white; border-color: #029ED9; }
+
+        /* ID Preview box */
+        .id-preview-box {
+            background: #e8f4f8; border: 2px solid #029ED9;
+            border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;
         }
-        
-        .quantidade-btn.selected {
-            background: #029ED9;
-            color: white;
-            border-color: #029ED9;
+        .id-preview-box .label {
+            font-size: 0.9em; color: #555; margin-bottom: 8px; font-weight: 600;
         }
-        
+        .id-preview-box .id-value {
+            font-size: 2em; font-weight: 800; color: #0E6883; letter-spacing: 2px;
+        }
+        .id-preview-box .id-hint {
+            font-size: 0.82em; color: #777; margin-top: 6px;
+        }
+        .id-loading { font-size: 1em; color: #888; }
+
         .submit-btn {
             background: linear-gradient(135deg, #029ED9 0%, #0E6883 100%);
-            color: white;
-            border: none;
-            padding: 18px 50px;
-            border-radius: 10px;
-            font-size: 1.2em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            margin-top: 30px;
+            color: white; border: none; padding: 18px 50px;
+            border-radius: 10px; font-size: 1.2em; font-weight: 700;
+            cursor: pointer; transition: all 0.3s; width: 100%; margin-top: 30px;
         }
-        
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(2, 158, 217, 0.4);
-        }
-        
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .success-message {
-            display: none;
-            background: #d4edda;
-            border: 2px solid #c3e6cb;
-            color: #155724;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .success-message.show {
-            display: block;
-        }
-        
-        .success-message h3 {
-            margin-bottom: 10px;
-            font-size: 1.3em;
-            font-weight: 700;
-        }
-        
-        .success-message .pedido-id {
-            font-size: 2em;
-            font-weight: bold;
-            color: #029ED9;
-            margin: 15px 0;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-        }
-        
-        .info-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            color: #856404;
-        }
-        
-        .info-box strong {
-            display: block;
-            margin-bottom: 5px;
-        }
-        
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(2,158,217,0.4); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
         .back-btn {
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 20px;
+            background: #6c757d; color: white; border: none;
+            padding: 12px 25px; border-radius: 8px; font-size: 1em;
+            font-weight: 600; cursor: pointer; margin-bottom: 20px;
         }
-        
-        .back-btn:hover {
-            background: #5a6268;
+        .back-btn:hover { background: #5a6268; }
+
+        .info-box {
+            background: #fff3cd; border-left: 4px solid #ffc107;
+            padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #856404;
         }
-        
+        .info-box strong { display: block; margin-bottom: 5px; }
+
+        /* Busca */
+        .busca-row { display: flex; gap: 10px; }
+        .busca-row input { flex: 1; }
+        .busca-btn {
+            background: #029ED9; color: white; border: none;
+            padding: 12px 22px; border-radius: 8px; cursor: pointer;
+            font-weight: 700; font-size: 1em; white-space: nowrap; transition: background 0.3s;
+        }
+        .busca-btn:hover { background: #0287bd; }
+        .busca-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Card info pedido */
+        .pedido-info-card {
+            display: none; background: #e3f2fd; border-radius: 10px;
+            padding: 20px; margin: 20px 0; border-left: 4px solid #2196F3;
+        }
+        .pedido-info-card p { margin: 6px 0; color: #1565C0; }
+
+        /* Itens com checkbox */
+        .itens-box {
+            display: none; background: #f8f9fa; border-radius: 10px;
+            padding: 20px; margin: 20px 0; border-left: 4px solid #029ED9;
+        }
+        .itens-box h3   { color: #0E6883; margin-bottom: 8px; }
+        .itens-box .hint { color: #666; font-size: 0.9em; margin-bottom: 15px; }
+
+        .item-cb-row {
+            display: flex; align-items: center; padding: 12px 15px;
+            margin: 6px 0; background: white; border: 2px solid #e0e0e0;
+            border-radius: 8px; cursor: pointer; transition: all 0.3s;
+        }
+        .item-cb-row:hover { border-color: #029ED9; }
+        .item-cb-row.checked { background: #e8f5e9; border-color: #4CAF50; }
+        .item-cb-row input[type="checkbox"] {
+            width: 20px; height: 20px; margin-right: 12px;
+            cursor: pointer; accent-color: #4CAF50; flex-shrink: 0;
+        }
+        .item-cb-row label { cursor: pointer; flex: 1; color: #333; }
+
+        /* Sucesso */
+        .success-message {
+            display: none; background: #d4edda;
+            border: 2px solid #c3e6cb; color: #155724;
+            padding: 30px; border-radius: 10px; text-align: center;
+        }
+        .success-message.show { display: block; }
+        .success-message h3 { margin-bottom: 10px; font-size: 1.3em; font-weight: 700; }
+        .success-message .pedido-id {
+            font-size: 2.2em; font-weight: 800; color: #0E6883;
+            margin: 15px 0; padding: 20px; background: white;
+            border-radius: 10px; border: 2px dashed #029ED9; letter-spacing: 3px;
+        }
+        .success-message .id-instrucao {
+            font-size: 0.95em; color: #555; margin-top: 8px;
+        }
+
+        /* Spinner */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner {
+            display: inline-block; width: 16px; height: 16px;
+            border: 3px solid #ccc; border-top-color: #029ED9;
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+            vertical-align: middle; margin-left: 6px;
+        }
+
         @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .header h1 {
-                font-size: 1.3em;
-            }
-            
-            .logo-container img {
-                max-width: 180px;
-            }
-            
-            .form-container {
-                padding: 20px;
-            }
-            
-            .estoque-grid {
-                grid-template-columns: 1fr;
-            }
+            .form-container { padding: 20px; }
+            .header h1 { font-size: 1.3em; }
+            .estoque-grid { grid-template-columns: 1fr; }
+            .busca-row { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo-container">
-                <img src="https://raw.githubusercontent.com/jotawall/assets/main/logo.png" alt="Jota Wall Logo" onerror="this.style.display='none'">
-            </div>
-            <h1>🦺 Sistema de Controle de EPIs</h1>
-            <p>Solicitação e Confirmação de Equipamentos de Proteção Individual</p>
+<div class="container">
+
+    <div class="header">
+        <div class="logo-container">
+            <img src="https://raw.githubusercontent.com/jotawall/assets/main/logo.png"
+                 alt="Jota Wall" onerror="this.style.display='none'">
         </div>
-        
-        <div class="form-container">
-            <!-- SELEÇÃO INICIAL -->
-            <div id="selecao-inicial" class="section active">
-                <h2 class="section-title">Escolha uma opção</h2>
-                
-                <div class="radio-group">
-                    <div class="radio-option" onclick="selectAction('solicitacao')">
-                        <input type="radio" name="tipo-acao" id="nova-solicitacao" value="solicitacao">
-                        <label for="nova-solicitacao">Nova Solicitação de EPI</label>
-                    </div>
-                    
-                    <div class="radio-option" onclick="selectAction('confirmacao')">
-                        <input type="radio" name="tipo-acao" id="confirmacao-entrega" value="confirmacao">
-                        <label for="confirmacao-entrega">Confirmação de Entrega</label>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- SEÇÃO: DADOS DA SOLICITAÇÃO -->
-            <div id="dados-solicitacao" class="section">
-                <button class="back-btn" onclick="voltarInicio()">← Voltar</button>
-                
-                <h2 class="section-title">Dados da Solicitação</h2>
-                
-                <div class="form-group">
-                    <label for="obra">Obra *</label>
-                    <select id="obra" required>
-                        <option value="">Selecione a obra</option>
-                        <option value="Cyrela - Living Hectare Anália Franco">Cyrela - Living Hectare Anália Franco</option>
-                        <option value="Cyrela - Grand Wish Santo André">Cyrela - Grand Wish Santo André</option>
-                        <option value="Miramar - Hospital Prevent Senior">Miramar - Hospital Prevent Senior</option>
-                        <option value="Eztec - Esther Towers">Eztec - Esther Towers</option>
-                        <option value="Eztec - Lindenberg Alto das Nações">Eztec - Lindenberg Alto das Nações</option>
-                        <option value="Eztec - Dot">Eztec - Dot</option>
-                        <option value="Kallas - QG Faria Lima">Kallas - QG Faria Lima</option>
-                        <option value="Kallas - YEP Pinheiro">Kallas - YEP Pinheiro</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="encarregado">Nome do Encarregado *</label>
-                    <input type="text" id="encarregado" placeholder="Digite o nome do encarregado" required>
-                </div>
-                
-                <button class="submit-btn" onclick="avancarParaColaboradores()">Continuar →</button>
-            </div>
-            
-            <!-- SEÇÃO: COLABORADORES -->
-            <div id="secao-colaboradores" class="section">
-                <button class="back-btn" onclick="voltarDados()">← Voltar</button>
-                
-                <h2 class="section-title">Pedidos por Colaborador</h2>
-                
-                <div class="info-box">
-                    <strong>Instruções:</strong>
-                    Adicione cada colaborador e seus itens. Você pode adicionar vários itens para o mesmo colaborador.
-                </div>
-                
-                <div id="colaboradores-lista"></div>
-                
-                <button class="add-btn" onclick="adicionarColaborador()">
-                    <span>+</span> Adicionar Colaborador
-                </button>
-                
-                <button class="submit-btn" onclick="avancarParaEstoque()">Continuar →</button>
-            </div>
-            
-            <!-- SEÇÃO: ESTOQUE -->
-            <div id="secao-estoque" class="section">
-                <button class="back-btn" onclick="voltarColaboradores()">← Voltar</button>
-                
-                <h2 class="section-title">Pedido para Estoque da Obra</h2>
-                
-                <div class="info-box">
-                    <strong>Opcional:</strong>
-                    Selecione as quantidades necessárias para o estoque da obra. Deixe em branco se não precisar.
-                </div>
-                
-                <div class="estoque-grid">
-                    <div class="estoque-item">
-                        <label>Luva G</label>
-                        <div class="quantidade-options" id="luva-g-opts"></div>
-                    </div>
-                    
-                    <div class="estoque-item">
-                        <label>Luva M</label>
-                        <div class="quantidade-options" id="luva-m-opts"></div>
-                    </div>
-                    
-                    <div class="estoque-item">
-                        <label>Óculos de Segurança</label>
-                        <div class="quantidade-options" id="oculos-opts"></div>
-                    </div>
-                    
-                    <div class="estoque-item">
-                        <label>Protetor Auditivo Plug</label>
-                        <div class="quantidade-options" id="protetor-opts"></div>
-                    </div>
-                </div>
-                
-                <button class="submit-btn" onclick="enviarSolicitacao()">📤 Enviar Solicitação</button>
-            </div>
-            
-            <!-- SEÇÃO: CONFIRMAÇÃO DE ENTREGA -->
-            <div id="secao-confirmacao" class="section">
-                <button class="back-btn" onclick="voltarInicio()">← Voltar</button>
-                
-                <h2 class="section-title">Confirmação de Entrega</h2>
-                
-                <div class="form-group">
-                    <label for="id-pedido">ID do Pedido *</label>
-                    <input type="text" id="id-pedido" placeholder="Digite o ID do pedido (ex: EPI-0001)" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="data-entrega">Data da Entrega *</label>
-                    <input type="date" id="data-entrega" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="observacao">Observações (opcional)</label>
-                    <textarea id="observacao" rows="4" placeholder="Digite observações se necessário"></textarea>
-                </div>
-                
-                <button class="submit-btn" onclick="enviarConfirmacao()">✅ Confirmar Entrega</button>
-            </div>
-            
-            <!-- MENSAGEM DE SUCESSO -->
-            <div id="success-message" class="success-message">
-                <h3>✅ Pedido Enviado com Sucesso!</h3>
-                <p>Anote este número para confirmar a entrega posteriormente:</p>
-                <div class="pedido-id" id="pedido-id-display"></div>
-                <button class="submit-btn" onclick="novoFormulario()" style="margin-top: 20px;">Fazer Novo Pedido</button>
-            </div>
-        </div>
+        <h1>🦺 Sistema de Controle de EPIs</h1>
+        <p>Solicitação e Confirmação de Equipamentos de Proteção Individual</p>
     </div>
-    
-    <script>
-        // ========================================
-        // CONFIGURAÇÃO - URL DO GOOGLE APPS SCRIPT
-        // ========================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby49Fbu-Vtnr4NGHzA9ZJEoehBd02RoaUtpHOCBBBcJrsPLlmpD3HFcMAdQwwJAGzkW/exec';
-        
-        // Configuração
-        const QUANTIDADES = [5, 10, 15, 20, 30, 40, 50];
-        let colaboradorCounter = 0;
-        
-        // Dados temporários
-        let formData = {
-            tipo: '',
-            obra: '',
-            encarregado: '',
-            colaboradores: [],
-            estoque: {}
-        };
-        
-        // Inicializar opções de quantidade para estoque
-        function initEstoqueOptions() {
-            const itens = ['luva-g', 'luva-m', 'oculos', 'protetor'];
-            
-            itens.forEach(item => {
-                const container = document.getElementById(`${item}-opts`);
-                QUANTIDADES.forEach(qtd => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'quantidade-btn';
-                    btn.textContent = qtd;
-                    btn.onclick = () => toggleQuantidade(item, qtd, btn);
-                    container.appendChild(btn);
-                });
-            });
-        }
-        
-        // Toggle quantidade no estoque
-        function toggleQuantidade(item, qtd, btn) {
-            const container = btn.parentElement;
-            container.querySelectorAll('.quantidade-btn').forEach(b => {
-                b.classList.remove('selected');
-            });
-            
-            if (formData.estoque[item] === qtd) {
-                formData.estoque[item] = null;
+
+    <div class="form-container">
+
+        <!-- ══════════════ SELEÇÃO INICIAL ══════════════ -->
+        <div id="selecao-inicial" class="section active">
+            <h2 class="section-title">Escolha uma opção</h2>
+            <div class="radio-group">
+                <div class="radio-option" onclick="selectAction('solicitacao')">
+                    <input type="radio" name="tipo-acao" id="rd-sol">
+                    <label for="rd-sol">📋 Nova Solicitação de EPI</label>
+                </div>
+                <div class="radio-option" onclick="selectAction('confirmacao')">
+                    <input type="radio" name="tipo-acao" id="rd-conf">
+                    <label for="rd-conf">✅ Confirmação de Entrega</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════ DADOS DA SOLICITAÇÃO ══════════════ -->
+        <div id="dados-solicitacao" class="section">
+            <button class="back-btn" onclick="showOnly('selecao-inicial')">← Voltar</button>
+            <h2 class="section-title">Dados da Solicitação</h2>
+
+            <div class="form-group">
+                <label for="obra">Obra *</label>
+                <select id="obra">
+                    <option value="">Selecione a obra</option>
+                    <option>Cyrela - Living Hectare Anália Franco</option>
+                    <option>Cyrela - Grand Wish Santo André</option>
+                    <option>Miramar - Hospital Prevent Senior</option>
+                    <option>Eztec - Esther Towers</option>
+                    <option>Eztec - Lindenberg Alto das Nações</option>
+                    <option>Eztec - Dot</option>
+                    <option>Kallas - QG Faria Lima</option>
+                    <option>Kallas - YEP Pinheiro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="encarregado">Nome do Encarregado *</label>
+                <input type="text" id="encarregado" placeholder="Digite o nome do encarregado">
+            </div>
+
+            <button class="submit-btn" onclick="avancarParaColaboradores()">Continuar →</button>
+        </div>
+
+        <!-- ══════════════ COLABORADORES ══════════════ -->
+        <div id="secao-colaboradores" class="section">
+            <button class="back-btn" onclick="showOnly('dados-solicitacao')">← Voltar</button>
+            <h2 class="section-title">Pedidos por Colaborador</h2>
+
+            <div class="info-box">
+                <strong>Instruções:</strong>
+                Adicione cada colaborador e seus itens. Você pode adicionar vários itens por colaborador.
+            </div>
+
+            <div id="colaboradores-lista"></div>
+            <button class="add-btn" onclick="adicionarColaborador()">+ Adicionar Colaborador</button>
+            <button class="submit-btn" onclick="avancarParaEstoque()">Continuar →</button>
+        </div>
+
+        <!-- ══════════════ ESTOQUE ══════════════ -->
+        <div id="secao-estoque" class="section">
+            <button class="back-btn" onclick="showOnly('secao-colaboradores')">← Voltar</button>
+            <h2 class="section-title">Pedido para Estoque da Obra</h2>
+
+            <!-- ID gerado antecipadamente e exibido ao encarregado -->
+            <div class="id-preview-box">
+                <div class="label">📋 ID do seu pedido</div>
+                <div class="id-value" id="id-preview-valor">
+                    <span class="id-loading">🔄 Gerando... <span class="spinner"></span></span>
+                </div>
+                <div class="id-hint">Anote este número para confirmar a entrega depois.</div>
+            </div>
+
+            <div class="info-box">
+                <strong>Opcional:</strong>
+                Selecione as quantidades para estoque. Deixe em branco se não precisar.
+            </div>
+
+            <div class="estoque-grid">
+                <div class="estoque-item">
+                    <label>Luva G</label>
+                    <div class="quantidade-options" id="luva-g-opts"></div>
+                </div>
+                <div class="estoque-item">
+                    <label>Luva M</label>
+                    <div class="quantidade-options" id="luva-m-opts"></div>
+                </div>
+                <div class="estoque-item">
+                    <label>Óculos de Segurança</label>
+                    <div class="quantidade-options" id="oculos-opts"></div>
+                </div>
+                <div class="estoque-item">
+                    <label>Protetor Auditivo Plug</label>
+                    <div class="quantidade-options" id="protetor-opts"></div>
+                </div>
+            </div>
+
+            <button class="submit-btn" id="btn-enviar-sol" onclick="enviarSolicitacao(this)">
+                📤 Enviar Solicitação
+            </button>
+        </div>
+
+        <!-- ══════════════ CONFIRMAÇÃO DE ENTREGA ══════════════ -->
+        <div id="secao-confirmacao" class="section">
+            <button class="back-btn" onclick="showOnly('selecao-inicial')">← Voltar</button>
+            <h2 class="section-title">Confirmação de Entrega</h2>
+
+            <div class="form-group">
+                <label for="input-id-pedido">ID do Pedido *</label>
+                <div class="busca-row">
+                    <input type="text"
+                           id="input-id-pedido"
+                           placeholder="Ex: EPI-0001"
+                           style="text-transform:uppercase"
+                           onkeydown="if(event.key==='Enter') buscarPedido()">
+                    <button class="busca-btn" id="btn-buscar" onclick="buscarPedido()">
+                        🔍 Buscar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Info do pedido encontrado -->
+            <div class="pedido-info-card" id="pedido-info-card">
+                <p><strong>📍 Obra:</strong> <span id="pi-obra"></span></p>
+                <p><strong>👤 Encarregado:</strong> <span id="pi-encarregado"></span></p>
+                <p><strong>📅 Data da Solicitação:</strong> <span id="pi-data"></span></p>
+                <p><strong>📊 Status:</strong> <span id="pi-status"></span></p>
+            </div>
+
+            <!-- Itens com checkbox -->
+            <div class="itens-box" id="itens-box">
+                <h3>📦 Itens Solicitados</h3>
+                <p class="hint">
+                    ✅ <strong>Marque</strong> apenas os itens que foram
+                    <strong>realmente entregues</strong>:
+                </p>
+                <div id="lista-itens-cb"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="input-data-entrega">Data da Entrega *</label>
+                <input type="date" id="input-data-entrega">
+            </div>
+
+            <div class="form-group">
+                <label for="input-observacao">Observações (opcional)</label>
+                <textarea id="input-observacao" rows="4"
+                    placeholder="Ex: Calça sem estoque, será entregue na próxima semana"></textarea>
+            </div>
+
+            <button class="submit-btn" id="btn-confirmar" onclick="enviarConfirmacao(this)">
+                ✅ Confirmar Entrega
+            </button>
+        </div>
+
+        <!-- ══════════════ SUCESSO ══════════════ -->
+        <div id="success-message" class="success-message">
+            <h3 id="succ-title">✅ Enviado com Sucesso!</h3>
+            <p id="succ-sub">Guarde o ID abaixo para confirmar a entrega depois:</p>
+            <div class="pedido-id" id="succ-id"></div>
+            <p class="id-instrucao" id="succ-instrucao"></p>
+            <button class="submit-btn" onclick="novoFormulario()" style="margin-top:20px">
+                🔄 Voltar ao Início
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// CONFIGURAÇÃO
+// ─────────────────────────────────────────────────────────────
+// ⚠️ PRODUÇÃO — cole aqui a URL do Web App gerada pelo Google Apps Script da empresa
+const SCRIPT_URL = 'COLE_AQUI_A_URL_DO_WEB_APP';
+const QUANTIDADES = [5, 10, 15, 20, 30, 40, 50];
+
+let colaboradorCounter = 0;
+let proximoIdPedido    = null; // ID buscado antecipadamente do servidor
+let formData = { obra: '', encarregado: '', colaboradores: [], estoque: {} };
+
+// ─────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────
+window.onload = () => {
+    initEstoqueOptions();
+    document.getElementById('input-data-entrega').valueAsDate = new Date();
+};
+
+function initEstoqueOptions() {
+    ['luva-g','luva-m','oculos','protetor'].forEach(item => {
+        const container = document.getElementById(`${item}-opts`);
+        QUANTIDADES.forEach(qtd => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'quantidade-btn';
+            btn.textContent = qtd;
+            btn.onclick = () => toggleQuantidade(item, qtd, btn);
+            container.appendChild(btn);
+        });
+    });
+}
+
+// ─────────────────────────────────────────────────────────────
+// NAVEGAÇÃO
+// ─────────────────────────────────────────────────────────────
+function showOnly(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+}
+
+function selectAction(tipo) {
+    if (tipo === 'solicitacao') {
+        showOnly('dados-solicitacao');
+    } else {
+        resetConfirmacao();
+        showOnly('secao-confirmacao');
+    }
+}
+
+function avancarParaColaboradores() {
+    const obra = document.getElementById('obra').value;
+    const enc  = document.getElementById('encarregado').value.trim();
+    if (!obra || !enc) { alert('Preencha todos os campos obrigatórios!'); return; }
+    formData.obra = obra;
+    formData.encarregado = enc;
+    showOnly('secao-colaboradores');
+    if (!document.getElementById('colaboradores-lista').children.length) adicionarColaborador();
+}
+
+function avancarParaEstoque() {
+    const cols = coletarDadosColaboradores();
+    if (!cols.length) { alert('Adicione pelo menos um colaborador com pelo menos um item!'); return; }
+    formData.colaboradores = cols;
+    showOnly('secao-estoque');
+    buscarProximoId(); // ← busca o ID antes de mostrar a tela
+}
+
+// ─────────────────────────────────────────────────────────────
+// BUSCAR PRÓXIMO ID (GET antes de enviar)
+// ─────────────────────────────────────────────────────────────
+function buscarProximoId() {
+    proximoIdPedido = null;
+    const elId  = document.getElementById('id-preview-valor');
+    const btnSend = document.getElementById('btn-enviar-sol');
+
+    elId.innerHTML = '<span class="id-loading">🔄 Gerando... <span class="spinner"></span></span>';
+    btnSend.disabled = true;
+
+    fetch(`${SCRIPT_URL}?acao=proximoId`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success' && data.idPedido) {
+                proximoIdPedido  = data.idPedido;
+                elId.textContent = data.idPedido;
+                btnSend.disabled = false;
             } else {
-                formData.estoque[item] = qtd;
-                btn.classList.add('selected');
+                elId.textContent = '⚠️ Erro ao gerar ID';
+                btnSend.disabled = false; // deixa tentar mesmo assim
             }
-        }
-        
-        // Navegação entre seções
-        function selectAction(tipo) {
-            document.getElementById(tipo === 'solicitacao' ? 'nova-solicitacao' : 'confirmacao-entrega').checked = true;
-            formData.tipo = tipo;
-            
-            hideAllSections();
-            
-            if (tipo === 'solicitacao') {
-                showSection('dados-solicitacao');
+        })
+        .catch(() => {
+            elId.textContent = '⚠️ Sem conexão';
+            btnSend.disabled = false;
+        });
+}
+
+// ─────────────────────────────────────────────────────────────
+// COLABORADORES
+// ─────────────────────────────────────────────────────────────
+function adicionarColaborador() {
+    colaboradorCounter++;
+    const id = colaboradorCounter;
+    const card = document.createElement('div');
+    card.className = 'colaborador-card';
+    card.id = `col-${id}`;
+    card.innerHTML = `
+        <h4>Colaborador ${id}</h4>
+        ${id > 1 ? `<button type="button" class="remove-btn"
+            onclick="document.getElementById('col-${id}').remove()">✕ Remover</button>` : ''}
+        <div class="form-group">
+            <label>Nome *</label>
+            <input type="text" class="col-nome" placeholder="Nome do colaborador">
+        </div>
+        <div id="itens-col-${id}"></div>
+        <button type="button" class="add-btn secondary"
+            onclick="adicionarItem(${id})">+ Adicionar Item</button>
+    `;
+    document.getElementById('colaboradores-lista').appendChild(card);
+    adicionarItem(id);
+}
+
+function adicionarItem(colId) {
+    const iid  = Date.now();
+    const box  = document.getElementById(`itens-col-${colId}`);
+    const isFirst = box.children.length === 0;
+    const div  = document.createElement('div');
+    div.className = 'item-epi';
+    div.id = `item-${iid}`;
+    div.innerHTML = `
+        ${!isFirst ? `<button type="button" class="remove-item-btn"
+            onclick="document.getElementById('item-${iid}').remove()">✕</button>` : ''}
+        <div class="form-group">
+            <label>Item *</label>
+            <select class="item-tipo" onchange="updateTamanhos(${iid})">
+                <option value="">Selecione o item</option>
+                <option>Bota</option>
+                <option>Calça</option>
+                <option>Camisa</option>
+                <option>Capacete</option>
+            </select>
+        </div>
+        <div class="form-group" id="tam-group-${iid}">
+            <label>Tamanho *</label>
+            <select class="item-tamanho" id="tam-${iid}">
+                <option value="">Selecione o item primeiro</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Quantidade *</label>
+            <input type="number" class="item-qtd" min="1" value="1">
+        </div>
+    `;
+    box.appendChild(div);
+}
+
+function updateTamanhos(iid) {
+    const div    = document.getElementById(`item-${iid}`);
+    const sel    = div.querySelector('.item-tipo').value;
+    const tamSel = document.getElementById(`tam-${iid}`);
+    const tamGrp = document.getElementById(`tam-group-${iid}`);
+    tamSel.innerHTML = '<option value="">Selecione o tamanho</option>';
+
+    const map = {
+        Bota:   ['38','39','40','41','42','43','44'],
+        Calça:  ['P','M','G','GG','XG'],
+        Camisa: ['P','M','G','GG','XG']
+    };
+
+    if (sel === 'Capacete') {
+        tamGrp.style.display = 'none';
+        tamSel.innerHTML = '<option value="U" selected>U</option>';
+    } else {
+        tamGrp.style.display = 'block';
+        (map[sel] || []).forEach(t => {
+            const o = document.createElement('option');
+            o.value = o.textContent = t;
+            tamSel.appendChild(o);
+        });
+    }
+}
+
+function coletarDadosColaboradores() {
+    const result = [];
+    document.querySelectorAll('.colaborador-card').forEach(card => {
+        const nome = card.querySelector('.col-nome').value.trim();
+        if (!nome) return;
+        const itens = [];
+        card.querySelectorAll('.item-epi').forEach(div => {
+            const item     = div.querySelector('.item-tipo').value;
+            const tamanho  = div.querySelector('.item-tamanho').value;
+            const quantidade = div.querySelector('.item-qtd').value;
+            if (item && tamanho && quantidade) itens.push({ item, tamanho, quantidade });
+        });
+        if (itens.length) result.push({ nome, itens });
+    });
+    return result;
+}
+
+function toggleQuantidade(item, qtd, btn) {
+    btn.parentElement.querySelectorAll('.quantidade-btn')
+       .forEach(b => b.classList.remove('selected'));
+    if (formData.estoque[item] === qtd) {
+        formData.estoque[item] = null;
+    } else {
+        formData.estoque[item] = qtd;
+        btn.classList.add('selected');
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// ENVIAR SOLICITAÇÃO
+// ─────────────────────────────────────────────────────────────
+function enviarSolicitacao(btn) {
+    btn.textContent = '⏳ Enviando...';
+    btn.disabled = true;
+
+    const payload = {
+        tipo:          'Nova Solicitação de EPI',
+        timestamp:     new Date().toISOString(),
+        idPedido:      proximoIdPedido,   // ← ID já gerado pelo servidor
+        obra:          formData.obra,
+        encarregado:   formData.encarregado,
+        colaboradores: formData.colaboradores,
+        estoque:       formData.estoque
+    };
+
+    fetch(SCRIPT_URL, {
+        method:  'POST',
+        mode:    'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body:    JSON.stringify(payload)
+    })
+    .then(() => {
+        const idExibir = proximoIdPedido || '—';
+        document.getElementById('succ-title').textContent      = '✅ Solicitação Enviada!';
+        document.getElementById('succ-sub').textContent        = 'Anote este ID para confirmar a entrega depois:';
+        document.getElementById('succ-id').textContent         = idExibir;
+        document.getElementById('succ-instrucao').textContent  =
+            'Use esse número na tela de "Confirmação de Entrega".';
+        showOnly('success-message');
+        document.getElementById('success-message').classList.add('show');
+    })
+    .catch(() => {
+        alert('Erro ao enviar. Verifique sua conexão.');
+        btn.textContent = '📤 Enviar Solicitação';
+        btn.disabled = false;
+    });
+}
+
+// ─────────────────────────────────────────────────────────────
+// BUSCAR PEDIDO
+// ─────────────────────────────────────────────────────────────
+function buscarPedido() {
+    const idPedido = document.getElementById('input-id-pedido').value.trim().toUpperCase();
+    if (!idPedido) { alert('Digite o ID do pedido.'); return; }
+
+    document.getElementById('pedido-info-card').style.display = 'none';
+    document.getElementById('itens-box').style.display        = 'none';
+    document.getElementById('lista-itens-cb').innerHTML       = '';
+
+    const btn = document.getElementById('btn-buscar');
+    btn.disabled = true;
+    btn.innerHTML = '⏳ <span class="spinner"></span>';
+
+    fetch(`${SCRIPT_URL}?acao=buscar&idPedido=${encodeURIComponent(idPedido)}`)
+        .then(r => r.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.textContent = '🔍 Buscar';
+
+            if (data.status === 'success') {
+                document.getElementById('pi-obra').textContent        = data.obra            || '-';
+                document.getElementById('pi-encarregado').textContent = data.encarregado     || '-';
+                document.getElementById('pi-data').textContent        = data.dataSolicitacao || '-';
+                document.getElementById('pi-status').textContent      = data.status_pedido   || '-';
+                document.getElementById('pedido-info-card').style.display = 'block';
+
+                const lista = document.getElementById('lista-itens-cb');
+                const itens = Array.isArray(data.itens) ? data.itens : [];
+
+                if (!itens.length) {
+                    lista.innerHTML = '<p style="color:#888">Nenhum item encontrado.</p>';
+                } else {
+                    itens.forEach((txt, i) => {
+                        const row = document.createElement('div');
+                        row.className = 'item-cb-row checked';
+
+                        const cb = document.createElement('input');
+                        cb.type     = 'checkbox';
+                        cb.id       = `cb-item-${i}`;
+                        cb.checked  = true;
+                        cb.onchange = () => row.classList.toggle('checked', cb.checked);
+
+                        const lbl = document.createElement('label');
+                        lbl.htmlFor     = `cb-item-${i}`;
+                        lbl.textContent = txt;
+
+                        row.appendChild(cb);
+                        row.appendChild(lbl);
+                        lista.appendChild(row);
+                    });
+                }
+
+                document.getElementById('itens-box').style.display = 'block';
+
+            } else if (data.status === 'not_found') {
+                alert(`Pedido "${idPedido}" não encontrado. Verifique o ID.`);
             } else {
-                showSection('secao-confirmacao');
+                alert('Erro: ' + (data.message || 'erro desconhecido'));
             }
-        }
-        
-        function hideAllSections() {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-        }
-        
-        function showSection(sectionId) {
-            document.getElementById(sectionId).classList.add('active');
-        }
-        
-        function voltarInicio() {
-            hideAllSections();
-            showSection('selecao-inicial');
-            limparFormulario();
-        }
-        
-        function voltarDados() {
-            hideAllSections();
-            showSection('dados-solicitacao');
-        }
-        
-        function voltarColaboradores() {
-            hideAllSections();
-            showSection('secao-colaboradores');
-        }
-        
-        function avancarParaColaboradores() {
-            const obra = document.getElementById('obra').value;
-            const encarregado = document.getElementById('encarregado').value;
-            
-            if (!obra || !encarregado) {
-                alert('Por favor, preencha todos os campos obrigatórios!');
-                return;
-            }
-            
-            formData.obra = obra;
-            formData.encarregado = encarregado;
-            
-            hideAllSections();
-            showSection('secao-colaboradores');
-            
-            if (document.getElementById('colaboradores-lista').children.length === 0) {
-                adicionarColaborador();
-            }
-        }
-        
-        function avancarParaEstoque() {
-            const colaboradores = coletarDadosColaboradores();
-            
-            if (colaboradores.length === 0) {
-                alert('Adicione pelo menos um colaborador com pelo menos um item!');
-                return;
-            }
-            
-            formData.colaboradores = colaboradores;
-            
-            hideAllSections();
-            showSection('secao-estoque');
-        }
-        
-        // Gerenciar colaboradores
-        function adicionarColaborador() {
-            colaboradorCounter++;
-            const id = colaboradorCounter;
-            
-            const card = document.createElement('div');
-            card.className = 'colaborador-card';
-            card.id = `colaborador-${id}`;
-            
-            card.innerHTML = `
-                <h4>Colaborador ${id}</h4>
-                ${id > 1 ? `<button type="button" class="remove-btn" onclick="removerColaborador(${id})">✕ Remover</button>` : ''}
-                
-                <div class="form-group">
-                    <label>Nome do Colaborador *</label>
-                    <input type="text" class="colaborador-nome" placeholder="Digite o nome" required>
-                </div>
-                
-                <div id="itens-lista-${id}"></div>
-                
-                <button type="button" class="add-btn secondary" onclick="adicionarItem(${id})">
-                    + Adicionar Item
-                </button>
-            `;
-            
-            document.getElementById('colaboradores-lista').appendChild(card);
-            
-            // Adicionar primeiro item automaticamente
-            adicionarItem(id);
-        }
-        
-        function adicionarItem(colaboradorId) {
-            const itemId = Date.now();
-            const itemsContainer = document.getElementById(`itens-lista-${colaboradorId}`);
-            const itemCount = itemsContainer.children.length;
-            
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'item-epi';
-            itemDiv.id = `item-${itemId}`;
-            
-            itemDiv.innerHTML = `
-                ${itemCount > 0 ? `<button type="button" class="remove-item-btn" onclick="removerItem(${itemId})">✕</button>` : ''}
-                
-                <div class="form-group">
-                    <label>Item *</label>
-                    <select class="item-tipo" required onchange="updateTamanhos(${itemId})">
-                        <option value="">Selecione o item</option>
-                        <option value="Bota">Bota</option>
-                        <option value="Calça">Calça</option>
-                        <option value="Camisa">Camisa</option>
-                        <option value="Capacete">Capacete</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Tamanho *</label>
-                    <select class="item-tamanho" id="tamanho-${itemId}" required>
-                        <option value="">Selecione primeiro o item</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Quantidade *</label>
-                    <input type="number" class="item-quantidade" min="1" value="1" required>
-                </div>
-            `;
-            
-            itemsContainer.appendChild(itemDiv);
-        }
-        
-        function removerItem(itemId) {
-            const item = document.getElementById(`item-${itemId}`);
-            if (item) {
-                item.remove();
-            }
-        }
-        
-        function removerColaborador(id) {
-            const card = document.getElementById(`colaborador-${id}`);
-            if (card) {
-                card.remove();
-            }
-        }
-        
-        function updateTamanhos(itemId) {
-            const itemDiv = document.getElementById(`item-${itemId}`);
-            const itemSelect = itemDiv.querySelector('.item-tipo');
-            const tamanhoSelect = itemDiv.querySelector('.item-tamanho');
-            const tamanhoGroup = tamanhoSelect.closest('.form-group');
-            
-            const item = itemSelect.value;
-            tamanhoSelect.innerHTML = '<option value="">Selecione o tamanho</option>';
-            
-            let tamanhos = [];
-            
-            switch(item) {
-                case 'Bota':
-                    tamanhos = ['38', '39', '40', '41', '42', '43', '44'];
-                    tamanhoGroup.style.display = 'block';
-                    break;
-                case 'Calça':
-                case 'Camisa':
-                    tamanhos = ['P', 'M', 'G', 'GG', 'XG'];
-                    tamanhoGroup.style.display = 'block';
-                    break;
-                case 'Capacete':
-                    // Ocultar campo de tamanho e definir valor automático
-                    tamanhoGroup.style.display = 'none';
-                    tamanhoSelect.innerHTML = '<option value="U" selected>U</option>';
-                    return;
-                default:
-                    tamanhoGroup.style.display = 'block';
-                    break;
-            }
-            
-            tamanhos.forEach(tam => {
-                const option = document.createElement('option');
-                option.value = tam;
-                option.textContent = tam;
-                tamanhoSelect.appendChild(option);
-            });
-        }
-        
-        function coletarDadosColaboradores() {
-            const cards = document.querySelectorAll('.colaborador-card');
-            const colaboradores = [];
-            
-            cards.forEach(card => {
-                const nome = card.querySelector('.colaborador-nome').value;
-                if (!nome) return;
-                
-                const itens = [];
-                const itemDivs = card.querySelectorAll('.item-epi');
-                
-                itemDivs.forEach(itemDiv => {
-                    const item = itemDiv.querySelector('.item-tipo').value;
-                    const tamanho = itemDiv.querySelector('.item-tamanho').value;
-                    const quantidade = itemDiv.querySelector('.item-quantidade').value;
-                    
-                    if (item && tamanho && quantidade) {
-                        itens.push({ item, tamanho, quantidade });
-                    }
-                });
-                
-                if (itens.length > 0) {
-                    colaboradores.push({ nome, itens });
-                }
-            });
-            
-            return colaboradores;
-        }
-        
-        // Enviar dados
-        function enviarSolicitacao() {
-            const btn = event.target;
-            btn.textContent = '⏳ Enviando...';
-            btn.disabled = true;
-            
-            const dados = {
-                tipo: 'Nova Solicitação de EPI',
-                timestamp: new Date().toISOString(),
-                obra: formData.obra,
-                encarregado: formData.encarregado,
-                colaboradores: formData.colaboradores,
-                estoque: formData.estoque
-            };
-            
-            console.log('=== DADOS COMPLETOS ===');
-            console.log('Obra:', dados.obra);
-            console.log('Encarregado:', dados.encarregado);
-            console.log('Colaboradores:', JSON.stringify(dados.colaboradores, null, 2));
-            console.log('Estoque:', JSON.stringify(dados.estoque, null, 2));
-            console.log('JSON completo a ser enviado:', JSON.stringify(dados, null, 2));
-            console.log('=======================');
-            
-            fetch(SCRIPT_URL, {
-                redirect: 'follow',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain',
-                },
-                body: JSON.stringify(dados)
-            })
-            .then(response => {
-                console.log('Resposta status:', response.status);
-                return response.json();
-            })
-            .then(result => {
-                console.log('Resposta recebida:', result);
-                
-                if (result.status === 'success') {
-                    mostrarSucesso(result.idPedido || 'EPI-XXXX');
-                } else {
-                    alert('Erro: ' + (result.message || 'Erro desconhecido'));
-                    btn.textContent = '📤 Enviar Solicitação';
-                    btn.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Erro completo:', error);
-                alert('Erro ao enviar. Verifique sua conexão e tente novamente.');
-                btn.textContent = '📤 Enviar Solicitação';
-                btn.disabled = false;
-            });
-        }
-        
-        function enviarConfirmacao() {
-            const idPedido = document.getElementById('id-pedido').value;
-            const dataEntrega = document.getElementById('data-entrega').value;
-            const observacao = document.getElementById('observacao').value;
-            
-            if (!idPedido || !dataEntrega) {
-                alert('Por favor, preencha todos os campos obrigatórios!');
-                return;
-            }
-            
-            const btn = event.target;
-            btn.textContent = '⏳ Confirmando...';
-            btn.disabled = true;
-            
-            const dados = {
-                tipo: 'Confirmação de Entrega',
-                timestamp: new Date().toISOString(),
-                idPedido,
-                dataEntrega,
-                observacao
-            };
-            
-            console.log('=== CONFIRMAÇÃO DE ENTREGA ===');
-            console.log('ID Pedido:', dados.idPedido);
-            console.log('Data Entrega:', dados.dataEntrega);
-            console.log('Observação:', dados.observacao);
-            console.log('JSON completo:', JSON.stringify(dados, null, 2));
-            console.log('==============================');
-            
-            fetch(SCRIPT_URL, {
-                redirect: 'follow',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain',
-                },
-                body: JSON.stringify(dados)
-            })
-            .then(response => {
-                console.log('Resposta status:', response.status);
-                return response.json();
-            })
-            .then(result => {
-                console.log('Resposta recebida:', result);
-                
-                if (result.status === 'success') {
-                    mostrarSucesso('Entrega Confirmada!');
-                } else {
-                    alert('Erro: ' + (result.message || 'Erro desconhecido'));
-                    btn.textContent = '✅ Confirmar Entrega';
-                    btn.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Erro completo na confirmação:', error);
-                alert('Erro ao confirmar. Verifique sua conexão e tente novamente.');
-                btn.textContent = '✅ Confirmar Entrega';
-                btn.disabled = false;
-            });
-        }
-        
-        function mostrarSucesso(mensagem) {
-            document.getElementById('pedido-id-display').textContent = mensagem;
-            hideAllSections();
-            document.getElementById('success-message').classList.add('show');
-        }
-        
-        function limparFormulario() {
-            document.getElementById('obra').value = '';
-            document.getElementById('encarregado').value = '';
-            document.getElementById('colaboradores-lista').innerHTML = '';
-            document.getElementById('id-pedido').value = '';
-            document.getElementById('data-entrega').value = '';
-            document.getElementById('observacao').value = '';
-            
-            formData.estoque = {};
-            document.querySelectorAll('.quantidade-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            
-            colaboradorCounter = 0;
-            document.getElementById('success-message').classList.remove('show');
-        }
-        
-        function novoFormulario() {
-            limparFormulario();
-            voltarInicio();
-        }
-        
-        // Inicializar ao carregar a página
-        window.onload = function() {
-            initEstoqueOptions();
-        };
-    </script>
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.textContent = '🔍 Buscar';
+            console.error(err);
+            alert('Erro de conexão. Tente novamente.');
+        });
+}
+
+// ─────────────────────────────────────────────────────────────
+// ENVIAR CONFIRMAÇÃO
+// ─────────────────────────────────────────────────────────────
+function enviarConfirmacao(btn) {
+    const idPedido    = document.getElementById('input-id-pedido').value.trim().toUpperCase();
+    const dataEntrega = document.getElementById('input-data-entrega').value;
+    const observacao  = document.getElementById('input-observacao').value.trim();
+
+    if (!idPedido)    { alert('Busque um pedido antes de confirmar.'); return; }
+    if (!dataEntrega) { alert('Informe a data da entrega.'); return; }
+
+    const itensEntregues = [];
+    const itensPendentes = [];
+    document.querySelectorAll('#lista-itens-cb .item-cb-row').forEach(row => {
+        const cb  = row.querySelector('input[type="checkbox"]');
+        const txt = row.querySelector('label').textContent;
+        if (cb && cb.checked) itensEntregues.push(txt);
+        else                  itensPendentes.push(txt);
+    });
+
+    btn.textContent = '⏳ Confirmando...';
+    btn.disabled = true;
+
+    fetch(SCRIPT_URL, {
+        method:  'POST',
+        mode:    'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+            tipo:           'Confirmação de Entrega',
+            timestamp:      new Date().toISOString(),
+            idPedido,
+            dataEntrega,
+            observacao,
+            itensEntregues,
+            itensPendentes
+        })
+    })
+    .then(() => {
+        document.getElementById('succ-title').textContent     = '✅ Entrega Confirmada!';
+        document.getElementById('succ-sub').textContent       = 'Pedido atualizado:';
+        document.getElementById('succ-id').textContent        = idPedido;
+        document.getElementById('succ-instrucao').textContent = '';
+        showOnly('success-message');
+        document.getElementById('success-message').classList.add('show');
+        resetConfirmacao();
+    })
+    .catch(() => {
+        alert('Erro ao confirmar. Verifique sua conexão.');
+        btn.textContent = '✅ Confirmar Entrega';
+        btn.disabled = false;
+    });
+}
+
+// ─────────────────────────────────────────────────────────────
+// RESET / NOVO FORMULÁRIO
+// ─────────────────────────────────────────────────────────────
+function resetConfirmacao() {
+    document.getElementById('input-id-pedido').value          = '';
+    document.getElementById('input-data-entrega').valueAsDate = new Date();
+    document.getElementById('input-observacao').value         = '';
+    document.getElementById('pedido-info-card').style.display = 'none';
+    document.getElementById('itens-box').style.display        = 'none';
+    document.getElementById('lista-itens-cb').innerHTML       = '';
+}
+
+function novoFormulario() {
+    document.getElementById('obra').value        = '';
+    document.getElementById('encarregado').value = '';
+    document.getElementById('colaboradores-lista').innerHTML = '';
+    formData = { obra: '', encarregado: '', colaboradores: [], estoque: {} };
+    colaboradorCounter = 0;
+    proximoIdPedido    = null;
+    document.querySelectorAll('.quantidade-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('success-message').classList.remove('show');
+    showOnly('selecao-inicial');
+}
+</script>
 </body>
 </html>
