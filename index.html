@@ -333,6 +333,10 @@
                     <label>Protetor Auditivo Plug</label>
                     <div class="quantidade-options" id="protetor-opts"></div>
                 </div>
+                <div class="estoque-item">
+                    <label>Máscara</label>
+                    <div class="quantidade-options" id="mascara-opts"></div>
+                </div>
             </div>
 
             <button class="submit-btn" id="btn-enviar-sol" onclick="enviarSolicitacao(this)">
@@ -428,7 +432,7 @@ window.onload = () => {
 };
 
 function initEstoqueOptions() {
-    ['luva-g','luva-m','oculos','protetor'].forEach(item => {
+    ['luva-g','luva-m','oculos','protetor','mascara'].forEach(item => {
         const container = document.getElementById(`${item}-opts`);
         QUANTIDADES.forEach(qtd => {
             const btn = document.createElement('button');
