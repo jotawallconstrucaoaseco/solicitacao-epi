@@ -289,7 +289,7 @@
 
             <div class="info-box">
                 <strong>Instruções:</strong>
-                Adicione cada colaborador e seus itens. Você pode adicionar vários itens por colaborador.
+                Adicione os colaboradores e seus itens. Se o pedido for apenas para o estoque da obra, clique em <b>Continuar</b> sem preencher.
             </div>
 
             <div id="colaboradores-lista"></div>
@@ -474,11 +474,11 @@ function avancarParaColaboradores() {
 }
 
 function avancarParaEstoque() {
+    // Collect collaborators — but allow empty list (stock-only orders)
     const cols = coletarDadosColaboradores();
-    if (!cols.length) { alert('Adicione pelo menos um colaborador com pelo menos um item!'); return; }
     formData.colaboradores = cols;
     showOnly('secao-estoque');
-    buscarProximoId(); // ← busca o ID antes de mostrar a tela
+    buscarProximoId();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -524,7 +524,7 @@ function adicionarColaborador() {
         ${id > 1 ? `<button type="button" class="remove-btn"
             onclick="document.getElementById('col-${id}').remove()">✕ Remover</button>` : ''}
         <div class="form-group">
-            <label>Nome *</label>
+            <label>Nome do Colaborador (opcional)</label>
             <input type="text" class="col-nome" placeholder="Nome do colaborador">
         </div>
         <div id="itens-col-${id}"></div>
@@ -552,6 +552,8 @@ function adicionarItem(colId) {
                 <option>Bota</option>
                 <option>Calça</option>
                 <option>Camisa</option>
+                <option>Camiseta Polo Branca</option>
+                <option>Camiseta Polo Preta</option>
                 <option>Capacete</option>
             </select>
         </div>
@@ -577,9 +579,11 @@ function updateTamanhos(iid) {
     tamSel.innerHTML = '<option value="">Selecione o tamanho</option>';
 
     const map = {
-        Bota:   ['38','39','40','41','42','43','44'],
-        Calça:  ['P','M','G','GG','XG'],
-        Camisa: ['P','M','G','GG','XG']
+        Bota:                 ['38','39','40','41','42','43','44'],
+        Calça:                ['P','M','G','GG','XG'],
+        Camisa:               ['P','M','G','GG','XG'],
+        'Camiseta Polo Branca': ['P','M','G','GG','XG'],
+        'Camiseta Polo Preta':  ['P','M','G','GG','XG']
     };
 
     if (sel === 'Capacete') {
@@ -627,6 +631,15 @@ function toggleQuantidade(item, qtd, btn) {
 // ENVIAR SOLICITAÇÃO
 // ─────────────────────────────────────────────────────────────
 function enviarSolicitacao(btn) {
+    // Smart validation: block only if both collaborators AND stock are empty
+    const temColaboradores = formData.colaboradores && formData.colaboradores.length > 0;
+    const temEstoque = Object.values(formData.estoque).some(v => v && v > 0);
+
+    if (!temColaboradores && !temEstoque) {
+        alert('Preencha pelo menos um colaborador ou selecione um item para o estoque antes de enviar.');
+        return;
+    }
+
     btn.textContent = '⏳ Enviando...';
     btn.disabled = true;
 
