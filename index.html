@@ -36,7 +36,7 @@
         .quantidade-btn.selected { background: #029ED9; color: white; border-color: #029ED9; }
         .id-preview-box { background: #e8f4f8; border: 2px solid #029ED9; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center; }
         .id-preview-box .id-value { font-size: 2em; font-weight: 800; color: #0E6883; letter-spacing: 2px; }
-        .submit-btn { background: linear-gradient(135deg, #029ED9 0%, #0E6883 100%); color: white; border: none; padding: 18px 50px; border-radius: 10px; font-size: 1.2em; font-weight: 700; cursor: pointer; width: 100%; margin-top: 30px; }
+        .submit-btn { background: linear-gradient(135deg, #029ED9 0%, #0E6883(14, 104, 131) 100%); color: white; border: none; padding: 18px 50px; border-radius: 10px; font-size: 1.2em; font-weight: 700; cursor: pointer; width: 100%; margin-top: 30px; }
         .back-btn { background: #6c757d; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 20px; }
         .info-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #856404; }
         .busca-row { display: flex; gap: 10px; } .busca-row input { flex: 1; }
@@ -63,7 +63,6 @@
     </div>
 
     <div class="form-container">
-        <!-- SELEÇÃO INICIAL -->
         <div id="selecao-inicial" class="section active">
             <h2 class="section-title">Escolha uma opção</h2>
             <div class="radio-group">
@@ -72,7 +71,6 @@
             </div>
         </div>
 
-        <!-- DADOS DA SOLICITAÇÃO -->
         <div id="dados-solicitacao" class="section">
             <button class="back-btn" onclick="showOnly('selecao-inicial')">← Voltar</button>
             <h2 class="section-title">Dados da Solicitação</h2>
@@ -94,7 +92,6 @@
             <button class="submit-btn" onclick="avancarParaColaboradores()">Continuar →</button>
         </div>
 
-        <!-- COLABORADORES -->
         <div id="secao-colaboradores" class="section">
             <button class="back-btn" onclick="showOnly('dados-solicitacao')">← Voltar</button>
             <h2 class="section-title">Pedidos por Colaborador</h2>
@@ -104,7 +101,6 @@
             <button class="submit-btn" onclick="avancarParaEstoque()">Continuar →</button>
         </div>
 
-        <!-- ESTOQUE -->
         <div id="secao-estoque" class="section">
             <button class="back-btn" onclick="showOnly('secao-colaboradores')">← Voltar</button>
             <h2 class="section-title">Pedido para Estoque da Obra</h2>
@@ -122,7 +118,6 @@
             <button class="submit-btn" id="btn-enviar-sol" onclick="enviarSolicitacao(this)">📤 Enviar Solicitação</button>
         </div>
 
-        <!-- CONFIRMAÇÃO DE ENTREGA -->
         <div id="secao-confirmacao" class="section">
             <button class="back-btn" onclick="showOnly('selecao-inicial')">← Voltar</button>
             <h2 class="section-title">Confirmação de Entrega</h2>
@@ -149,7 +144,6 @@
             <button class="submit-btn" id="btn-confirmar" onclick="enviarConfirmacao(this)">✅ Confirmar Entrega</button>
         </div>
 
-        <!-- SUCESSO -->
         <div id="success-message" class="success-message">
             <h3 id="succ-title">✅ Enviado com Sucesso!</h3>
             <div class="pedido-id" id="succ-id"></div>
@@ -248,7 +242,7 @@ function buscarPedido() {
     }).catch(() => { btn.disabled = false; });
 }
 
-// ── CORREÇÃO DE LOGICA DE ENVIO CONFORME DIRETRIZ DA LETÍCIA ────────────────
+// ── ENVIO OTIMIZADO PARA EMISSÃO DE PDF ISOLADO DA FICHA ──────────────────
 function enviarConfirmacao(btn) {
     const idPedido = document.getElementById('input-id-pedido').value.trim().toUpperCase();
     const dataEntrega = document.getElementById('input-data-entrega').value;
@@ -258,23 +252,42 @@ function enviarConfirmacao(btn) {
 
     const itensEntregues = [];
     const itensPendentes = [];
+    const itensEntreguesRaw = []; // 📦 Lista estruturada para o gerador de PDF
 
-    // Vasculha a lista de checkboxes na tela
     document.querySelectorAll('#lista-itens-cb .item-cb-row').forEach(row => {
         const cb = row.querySelector('input[type="checkbox"]');
-        const txt = row.querySelector('label').textContent;
+        const txt = row.querySelector('label').textContent.trim();
         
         if (cb && cb.checked) {
-            itensEntregues.push(txt); // 🟢 O que o encarregado marcou AGORA vai para a ficha
+            itensEntregues.push(txt);
+            
+            // Fatiamento nativo no front antes de enviar para o servidor
+            if (txt.includes(':')) {
+                const quebra = txt.split(':');
+                const colNome = quebra[0].trim();
+                let detalheItem = quebra.slice(1).join(':').trim();
+                let qtdItem = 1;
+                
+                if (detalheItem.includes('- Qtd:')) {
+                    const subQtd = detalheItem.split('- Qtd:');
+                    detalheItem = subQtd[0].trim();
+                    qtdItem = parseInt(subQtd[1].trim(), 10) || 1;
+                }
+                
+                itensEntreguesRaw.push({
+                    colaborador: colNome,
+                    item: detalheItem,
+                    qtd: qtdItem
+                });
+            }
         } else {
-            itensPendentes.push(txt);  // 🔴 O que ficou desmarcado permanece pendente na planilha
+            itensPendentes.push(txt);
         }
     });
 
     btn.textContent = '⏳ Salvando e Gerando Ficha...';
     btn.disabled = true;
 
-    // Envia os dados estruturados de forma limpa para o Google Apps Script processar e gerar o PDF
     fetch(SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
@@ -284,23 +297,19 @@ function enviarConfirmacao(btn) {
             dataEntrega: dataEntrega,
             observacao: observacao,
             itensEntregues: itensEntregues,
-            itensPendentes: itensPendentes
+            itensPendentes: itensPendentes,
+            itensEntreguesRaw: itensEntreguesRaw // Envia os dados limpos ao Apps Script
         })
     })
-    .then(res => res.json())
-    .then(resData => {
+    .then(() => {
         document.getElementById('succ-title').textContent = '✅ Entrega Registrada!';
         document.getElementById('succ-id').textContent = idPedido;
-        document.getElementById('succ-instrucao').textContent = 'Ficha de EPI gerada com sucesso apenas com os itens entregues.';
-        showOnly('success-message');
+        document.getElementById('succ-instrucao').textContent = 'Ficha de EPI salva com sucesso na pasta "Fichas EPI" do seu Drive.';
+        document.getElementById('success-message').classList.add('show');
         resetConfirmacao();
     })
     .catch(() => {
-        // Fallback caso a API responda no-cors mas processe com sucesso
-        document.getElementById('succ-title').textContent = '✅ Entrega Registrada!';
-        document.getElementById('succ-id').textContent = idPedido;
-        showOnly('success-message');
-        resetConfirmacao();
+        alert('Erro ao processar baixa.');
     })
     .finally(() => {
         btn.textContent = '✅ Confirmar Entrega';
@@ -308,8 +317,8 @@ function enviarConfirmacao(btn) {
     });
 }
 
-function resetConfirmacao() { document.getElementById('input-id-pedido').value = ''; document.getElementById('input-observacao').value = ''; document.getElementById('pedido-info-card').style.display = 'none'; document.getElementById('itens-box').style.display = 'none'; }
-function novoFormulario() { document.getElementById('obra').value = ''; document.getElementById('encarregado').value = ''; document.getElementById('colaboradores-lista').innerHTML = ''; formData = { obra: '', encarregado: '', colaboradores: [], estoque: {} }; colaboradorCounter = 0; proximoIdPedido = null; showOnly('selecao-inicial'); }
+function resetConfirmacao() { document.getElementById('input-id-pedido').value = ''; document.getElementById('input-observacao').value = ''; document.getElementById('pedido-info-card').style.display = 'none'; document.getElementById('itens-box').style.display = 'none'; document.getElementById('lista-itens-cb').innerHTML = ''; }
+function novoFormulario() { document.getElementById('obra').value = ''; document.getElementById('encarregado').value = ''; document.getElementById('colaboradores-lista').innerHTML = ''; formData = { obra: '', encarregado: '', colaboradores: [], estoque: {} }; colaboradorCounter = 0; proximoIdPedido = null; document.querySelectorAll('.quantidade-btn').forEach(b => b.classList.remove('selected')); document.getElementById('success-message').classList.remove('show'); showOnly('selecao-inicial'); }
 </script>
 </body>
 </html>
